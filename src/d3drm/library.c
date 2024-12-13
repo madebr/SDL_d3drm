@@ -62,9 +62,17 @@ D3DVALUE SDL_WINAPI D3DRMVectorModulus(const D3DVECTOR *x) {
 }
 
 D3DVECTOR * SDL_WINAPI D3DRMVectorRandom(D3DVECTOR *ret) {
-    (void) ret;
-    SDL_TriggerBreakpoint();
-    abort();
+    D3DVALUE m;
+    do {
+        ret->x = 2.f * SDL_randf() - 1;
+        ret->y = 2.f * SDL_randf() - 1;
+        ret->z = 2.f * SDL_randf() - 1;
+        m = D3DRMVectorModulus(ret);
+    } while (m == 0.f);
+    ret->x /= m;
+    ret->y /= m;
+    ret->z /= m;
+    return ret;
 }
 
 D3DVECTOR * SDL_WINAPI D3DRMVectorRotate(D3DVECTOR *ret, const D3DVECTOR *x, const D3DVECTOR *axis, const D3DVALUE theta) {

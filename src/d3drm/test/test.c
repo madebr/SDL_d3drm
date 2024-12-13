@@ -344,6 +344,24 @@ static const SDLTest_TestCaseReference d3drmD3DRMVectorModulus  = {
     d3drm_D3DRMVectorModulus, "d3drm_D3DRMVectorModulus", "Test D3DRMVectorModulus", TEST_ENABLED
 };
 
+static int SDLCALL d3drm_D3DRMVectorRandom(void *arg) {
+    (void) arg;
+    for (unsigned i = 0; i < 50; i++) {
+        D3DVECTOR v;
+        SDLTest_AssertPass("D3DRMVectorRandom(%p)", &v);
+        D3DVECTOR *rc = D3DRMVectorRandom(&v);
+        SDLTest_AssertCheck(rc == &v, "D3DRMVectorRandom returns correct pointer: got %p, expected %p", rc, &v);
+        float m = SDL_sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
+        double delta = float_delta(m, 1.f);
+        SDLTest_AssertCheck(delta <= EPSILON, "{%f, %f, %f}: Length = %f, expected = 1.00 (delta = %g)", v.x, v.y, v.z, m, delta);
+    }
+    return TEST_COMPLETED;
+}
+
+static const SDLTest_TestCaseReference d3drmD3DRMVectorRandom  = {
+    d3drm_D3DRMVectorRandom, "d3drm_D3DRMVectorRandom", "Test D3DRMVectorRandom", TEST_ENABLED
+};
+
 static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMColorGetRed,
     &d3drmD3DRMColorGetGreen,
@@ -354,6 +372,7 @@ static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMVectorAdd,
     &d3drmD3DRMVectorSubtract,
     &d3drmD3DRMVectorModulus,
+    &d3drmD3DRMVectorRandom,
     NULL
 };
 
