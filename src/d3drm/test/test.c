@@ -283,6 +283,40 @@ static const SDLTest_TestCaseReference d3drmD3DRMVectorAdd  = {
     d3drm_D3DRMVectorAdd, "d3drm_D3DRMVectorAdd", "Test D3DRMVectorAdd", TEST_ENABLED
 };
 
+static int SDLCALL d3drm_D3DRMVectorSubtract(void *arg) {
+    const struct {
+        D3DVECTOR x, y;
+        D3DVECTOR out;
+    } test_cases[] = {
+        { {{0.f},   {0.f},    {0.f}},   {{0.f},     {0.f},  {0.f}},     {{0.f},     {0.f},      {0.f}} },
+        { {{1.f},   {0.f},    {0.f}},   {{0.f},     {0.f},  {0.f}},     {{1.f},     {0.f},      {0.f}} },
+        { {{1.f},   {0.f},    {0.f}},   {{1.f},     {0.f},  {0.f}},     {{0.f},     {0.f},      {0.f}} },
+        { {{1.f},   {-10.f},  {0.f}},   {{1.f},     {0.f},  {10.f}},    {{0.f},     {-10.f},    {-10.f}} },
+        { {{1234.f},{-10.f},  {97.f}},  {{-40.f},   {0.f},  {80.f}},    {{1274.f},  {-10.f},    {17.f}} },
+    };
+    (void) arg;
+    for (unsigned i = 0; i < SDL_arraysize(test_cases); i++) {
+        D3DVECTOR x = test_cases[i].x;
+        D3DVECTOR y = test_cases[i].y;
+        D3DVECTOR ref_out = test_cases[i].out;
+        D3DVECTOR out;
+        D3DVECTOR *rc;
+        SDLTest_AssertPass("D3DRMVectorSubtract({%f, %f, %f}, {%f, %f, %f})", x.x, x.y, x.z, y.x, y.y, y.z);
+        rc = D3DRMVectorSubtract(&out, &x, &y);
+        SDLTest_AssertCheck(rc == &out, "D3DRMVectorSubtract returns correct pointer: got %p, expected %p", rc, &out);
+        double delta1 = float_delta(out.x, ref_out.x);
+        double delta2 = float_delta(out.y, ref_out.y);
+        double delta3 = float_delta(out.z, ref_out.z);
+        SDLTest_AssertCheck(delta1 < EPSILON && delta2 < EPSILON && delta3 < EPSILON,
+            "Got {%f, %f, %f}, expected {%f, %f, %f} (delta={%g, %g, %g})", out.x, out.y, out.z, ref_out.x, ref_out.y, ref_out.z, delta1, delta2, delta3);
+    }
+    return TEST_COMPLETED;
+}
+
+static const SDLTest_TestCaseReference d3drmD3DRMVectorSubtract  = {
+    d3drm_D3DRMVectorSubtract, "d3drm_D3DRMVectorSubtract", "Test D3DRMVectorSubtract", TEST_ENABLED
+};
+
 static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMColorGetRed,
     &d3drmD3DRMColorGetGreen,
@@ -291,6 +325,7 @@ static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMCreateColorRGB,
     &d3drmD3DRMCreateColorRGBA,
     &d3drmD3DRMVectorAdd,
+    &d3drmD3DRMVectorSubtract,
     NULL
 };
 

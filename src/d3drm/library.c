@@ -94,11 +94,10 @@ D3DVECTOR * SDL_WINAPI D3DRMVectorScale(D3DVECTOR *ret, const D3DVECTOR *x, cons
 }
 
 D3DVECTOR * SDL_WINAPI D3DRMVectorSubtract(D3DVECTOR *ret, const D3DVECTOR *x, const D3DVECTOR *y) {
-    (void) ret;
-    (void) x;
-    (void) y;
-    SDL_TriggerBreakpoint();
-    abort();
+    ret->x = x->x - y->x;
+    ret->y = x->y - y->y;
+    ret->z = x->z - y->z;
+    return ret;
 }
 
 D3DCOLOR SDL_WINAPI D3DRMCreateColorRGB(D3DVALUE r, D3DVALUE g, D3DVALUE b) {
