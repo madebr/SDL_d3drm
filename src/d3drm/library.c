@@ -14,12 +14,17 @@ D3DRMQUATERNION * SDL_WINAPI D3DRMQuaternionFromRotation(D3DRMQUATERNION *x, D3D
     return x;
 }
 
-D3DRMQUATERNION * SDL_WINAPI D3DRMQuaternionMultiply(D3DRMQUATERNION *ret, D3DRMQUATERNION *x, D3DRMQUATERNION *y) {
-    (void) ret;
-    (void) x;
-    (void) y;
-    SDL_TriggerBreakpoint();
-    abort();
+D3DRMQUATERNION * SDL_WINAPI D3DRMQuaternionMultiply(D3DRMQUATERNION *ret, const D3DRMQUATERNION *x, const D3DRMQUATERNION *y) {
+    D3DVECTOR a;
+    D3DVECTOR b;
+    D3DVALUE v = D3DRMVectorDotProduct(&x->v, &y->v);
+    D3DRMVectorScale(&a, &y->v, x->s);
+    D3DRMVectorScale(&b, &x->v, y->s);
+    D3DRMVectorAdd(&a, &a, &b);
+    D3DRMVectorCrossProduct(&b, &x->v, &y->v);
+    D3DRMVectorAdd(&ret->v, &a, &b);
+    ret->s = x->s * y->s - v;
+    return ret;
 }
 
 D3DRMQUATERNION * SDL_WINAPI D3DRMQuaternionSlerp(D3DRMQUATERNION *ret, D3DRMQUATERNION *x, D3DRMQUATERNION *y, D3DVALUE alpha) {
