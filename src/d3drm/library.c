@@ -28,14 +28,14 @@ D3DRMQUATERNION * SDL_WINAPI D3DRMQuaternionSlerp(D3DRMQUATERNION *ret, D3DRMQUA
     abort();
 }
 
-D3DVECTOR * SDL_WINAPI D3DRMVectorAdd(D3DVECTOR *ret, D3DVECTOR *x, D3DVECTOR *y) {
+D3DVECTOR * SDL_WINAPI D3DRMVectorAdd(D3DVECTOR *ret, const D3DVECTOR *x, const D3DVECTOR *y) {
     ret->x = x->x + y->x;
     ret->y = x->y + y->y;
     ret->z = x->z + y->z;
     return ret;
 }
 
-D3DVECTOR * SDL_WINAPI D3DRMVectorCrossProduct(D3DVECTOR *ret, D3DVECTOR *x, D3DVECTOR *y) {
+D3DVECTOR * SDL_WINAPI D3DRMVectorCrossProduct(D3DVECTOR *ret, const D3DVECTOR *x, const D3DVECTOR *y) {
     (void) ret;
     (void) x;
     (void) y;
@@ -43,7 +43,7 @@ D3DVECTOR * SDL_WINAPI D3DRMVectorCrossProduct(D3DVECTOR *ret, D3DVECTOR *x, D3D
     abort();
 }
 
-D3DVALUE SDL_WINAPI D3DRMVectorDotProduct(D3DVECTOR *x, D3DVECTOR *y) {
+D3DVALUE SDL_WINAPI D3DRMVectorDotProduct(const D3DVECTOR *x, const D3DVECTOR *y) {
     (void) x;
     (void) y;
     SDL_TriggerBreakpoint();
@@ -56,7 +56,7 @@ D3DVECTOR * SDL_WINAPI D3DRMVectorNormalize(D3DVECTOR *x) {
     abort();
 }
 
-D3DVALUE SDL_WINAPI D3DRMVectorModulus(D3DVECTOR *x) {
+D3DVALUE SDL_WINAPI D3DRMVectorModulus(const D3DVECTOR *x) {
     (void) x;
     SDL_TriggerBreakpoint();
     abort();
@@ -68,7 +68,7 @@ D3DVECTOR * SDL_WINAPI D3DRMVectorRandom(D3DVECTOR *ret) {
     abort();
 }
 
-D3DVECTOR * SDL_WINAPI D3DRMVectorRotate(D3DVECTOR *ret, D3DVECTOR *x, D3DVECTOR *axis, D3DVALUE theta) {
+D3DVECTOR * SDL_WINAPI D3DRMVectorRotate(D3DVECTOR *ret, const D3DVECTOR *x, const D3DVECTOR *axis, const D3DVALUE theta) {
     (void) ret;
     (void) x;
     (void) axis;
@@ -77,7 +77,7 @@ D3DVECTOR * SDL_WINAPI D3DRMVectorRotate(D3DVECTOR *ret, D3DVECTOR *x, D3DVECTOR
     abort();
 }
 
-D3DVECTOR * SDL_WINAPI D3DRMVectorReflect(D3DVECTOR *ret, D3DVECTOR *ray, D3DVECTOR *normal) {
+D3DVECTOR * SDL_WINAPI D3DRMVectorReflect(D3DVECTOR *ret, const D3DVECTOR *ray, const D3DVECTOR *normal) {
     (void) ret;
     (void) ray;
     (void) normal;
@@ -85,7 +85,7 @@ D3DVECTOR * SDL_WINAPI D3DRMVectorReflect(D3DVECTOR *ret, D3DVECTOR *ray, D3DVEC
     abort();
 }
 
-D3DVECTOR * SDL_WINAPI D3DRMVectorScale(D3DVECTOR *ret, D3DVECTOR *x, D3DVALUE scale) {
+D3DVECTOR * SDL_WINAPI D3DRMVectorScale(D3DVECTOR *ret, const D3DVECTOR *x, const D3DVALUE scale) {
     (void) ret;
     (void) x;
     (void) scale;
@@ -93,7 +93,7 @@ D3DVECTOR * SDL_WINAPI D3DRMVectorScale(D3DVECTOR *ret, D3DVECTOR *x, D3DVALUE s
     abort();
 }
 
-D3DVECTOR * SDL_WINAPI D3DRMVectorSubtract(D3DVECTOR *ret, D3DVECTOR *x, D3DVECTOR *y) {
+D3DVECTOR * SDL_WINAPI D3DRMVectorSubtract(D3DVECTOR *ret, const D3DVECTOR *x, const D3DVECTOR *y) {
     (void) ret;
     (void) x;
     (void) y;
@@ -125,7 +125,7 @@ D3DVALUE SDL_WINAPI D3DRMColorGetRed(D3DCOLOR c) {
     return (float)RGBA_GETRED(c) / 255.f;
 }
 
-void SDL_WINAPI D3DRMMatrixFromQuaternion(D3DRMMATRIX4D m, D3DRMQUATERNION *q) {
+void SDL_WINAPI D3DRMMatrixFromQuaternion(D3DRMMATRIX4D m, const D3DRMQUATERNION *q) {
     (void) m;
     (void) q;
     SDL_TriggerBreakpoint();
