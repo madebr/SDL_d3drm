@@ -4,6 +4,10 @@
 
 #define EPSILON 2e-5f
 
+static double float_delta(float a, float b) {
+    return SDL_fabs(a - b);
+}
+
 static int SDLCALL d3drm_D3DRMColorGetRed(void *arg) {
     const struct {
         D3DCOLOR in;
@@ -32,7 +36,7 @@ static int SDLCALL d3drm_D3DRMColorGetRed(void *arg) {
         D3DVALUE ref_out = test_cases[i].out;
         SDLTest_AssertPass("D3DRMColorGetRed(0x%08" SDL_PRIx32 ")", ref_in);
         D3DVALUE actual = D3DRMColorGetRed(ref_in);
-        double delta = SDL_fabs(actual - ref_out);
+        double delta = float_delta(actual, ref_out);
         SDLTest_AssertCheck(delta < EPSILON, "Got %f, expected %f (delta=%g)", actual, ref_out, delta);
     }
     return TEST_COMPLETED;
@@ -68,7 +72,7 @@ static int SDLCALL d3drm_D3DRMColorGetGreen(void *arg) {
         D3DVALUE ref_out = test_cases[i].out;
         SDLTest_AssertPass("D3DRMColorGetGreen(0x%08" SDL_PRIx32 ")", ref_in);
         D3DVALUE actual = D3DRMColorGetGreen(ref_in);
-        double delta = SDL_fabs(actual - ref_out);
+        double delta = float_delta(actual, ref_out);
         SDLTest_AssertCheck(delta < EPSILON, "Got %f, expected %f (delta=%g)", actual, ref_out, delta);
     }
     return TEST_COMPLETED;
@@ -104,7 +108,7 @@ static int SDLCALL d3drm_D3DRMColorGetBlue(void *arg) {
         D3DVALUE ref_out = test_cases[i].out;
         SDLTest_AssertPass("D3DRMColorGetBlue(0x%08" SDL_PRIx32 ")", ref_in);
         D3DVALUE actual = D3DRMColorGetBlue(ref_in);
-        double delta = SDL_fabs(actual - ref_out);
+        double delta = float_delta(actual, ref_out);
         SDLTest_AssertCheck(delta < EPSILON, "Got %f, expected %f (delta=%g)", actual, ref_out, delta);
     }
     return TEST_COMPLETED;
@@ -140,7 +144,7 @@ static int SDLCALL d3drm_D3DRMColorGetAlpha(void *arg) {
         D3DVALUE ref_out = test_cases[i].out;
         SDLTest_AssertPass("D3DRMColorGetAlpha(0x%08" SDL_PRIx32 ")", ref_in);
         D3DVALUE actual = D3DRMColorGetAlpha(ref_in);
-        double delta = SDL_fabs(actual - ref_out);
+        double delta = float_delta(actual, ref_out);
         SDLTest_AssertCheck(delta < EPSILON, "Got %f, expected %f (delta=%g)", actual, ref_out, delta);
     }
     return TEST_COMPLETED;
@@ -245,6 +249,40 @@ static const SDLTest_TestCaseReference d3drmD3DRMCreateColorRGBA  = {
     d3drm_D3DRMCreateColorRGBA, "d3drm_D3DRMCreateColorRGBA", "Test D3DRMCreateColorRGBA", TEST_ENABLED
 };
 
+static int SDLCALL d3drm_D3DRMVectorAdd(void *arg) {
+    const struct {
+        D3DVECTOR x, y;
+        D3DVECTOR out;
+    } test_cases[] = {
+        { {{0.f},   {0.f},    {0.f}},   {{0.f},     {0.f},  {0.f}},     {{0.f},     {0.f},      {0.f}} },
+        { {{1.f},   {0.f},    {0.f}},   {{0.f},     {0.f},  {0.f}},     {{1.f},     {0.f},      {0.f}} },
+        { {{1.f},   {0.f},    {0.f}},   {{1.f},     {0.f},  {0.f}},     {{2.f},     {0.f},      {0.f}} },
+        { {{1.f},   {-10.f},  {0.f}},   {{1.f},     {0.f},  {10.f}},    {{2.f},     {-10.f},    {10.f}} },
+        { {{1234.f},{-10.f},  {97.f}},  {{-40.f},   {0.f},  {80.f}},    {{1194.f},  {-10.f},    {177.f}} },
+    };
+    (void) arg;
+    for (unsigned i = 0; i < SDL_arraysize(test_cases); i++) {
+        D3DVECTOR x = test_cases[i].x;
+        D3DVECTOR y = test_cases[i].y;
+        D3DVECTOR ref_out = test_cases[i].out;
+        D3DVECTOR out;
+        D3DVECTOR *rc;
+        SDLTest_AssertPass("D3DRMVectorAdd({%f, %f, %f}, {%f, %f, %f})", x.x, x.y, x.z, y.x, y.y, y.z);
+        rc = D3DRMVectorAdd(&out, &x, &y);
+        SDLTest_AssertCheck(rc == &out, "D3DRMVectorAdd returns correct pointer: got %p, expected %p", rc, &out);
+        double delta1 = float_delta(out.x, ref_out.x);
+        double delta2 = float_delta(out.y, ref_out.y);
+        double delta3 = float_delta(out.z, ref_out.z);
+        SDLTest_AssertCheck(delta1 < EPSILON && delta2 < EPSILON && delta3 < EPSILON,
+            "Got {%f, %f, %f}, expected {%f, %f, %f} (delta={%g, %g, %g}", out.x, out.y, out.z, ref_out.x, ref_out.y, ref_out.z, delta1, delta2, delta3);
+    }
+    return TEST_COMPLETED;
+}
+
+static const SDLTest_TestCaseReference d3drmD3DRMVectorAdd  = {
+    d3drm_D3DRMVectorAdd, "d3drm_D3DRMVectorAdd", "Test D3DRMVectorAdd", TEST_ENABLED
+};
+
 static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMColorGetRed,
     &d3drmD3DRMColorGetGreen,
@@ -252,6 +290,7 @@ static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMColorGetAlpha,
     &d3drmD3DRMCreateColorRGB,
     &d3drmD3DRMCreateColorRGBA,
+    &d3drmD3DRMVectorAdd,
     NULL
 };
 

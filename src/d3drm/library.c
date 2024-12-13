@@ -29,11 +29,10 @@ D3DRMQUATERNION * SDL_WINAPI D3DRMQuaternionSlerp(D3DRMQUATERNION *ret, D3DRMQUA
 }
 
 D3DVECTOR * SDL_WINAPI D3DRMVectorAdd(D3DVECTOR *ret, D3DVECTOR *x, D3DVECTOR *y) {
-    (void) ret;
-    (void) x;
-    (void) y;
-    SDL_TriggerBreakpoint();
-    abort();
+    ret->x = x->x + y->x;
+    ret->y = x->y + y->y;
+    ret->z = x->z + y->z;
+    return ret;
 }
 
 D3DVECTOR * SDL_WINAPI D3DRMVectorCrossProduct(D3DVECTOR *ret, D3DVECTOR *x, D3DVECTOR *y) {
