@@ -1,7 +1,7 @@
 #define ENV_VARIABLE "D3DRM_PATH"
-#define WIN_DLL "SDL_d3drm.dll"
-#define APPLE_DYLIB "SDL_d3drm.dylib"
-#define UNIX_SO "SDL_d3drm.so"
+#define WIN_DLL "SDL3_d3drm.dll"
+#define APPLE_DYLIB "SDL3_d3drm.dylib"
+#define UNIX_SO "SDL3_d3drm.so"
 
 #ifdef _WIN32
 #include <windows.h>
