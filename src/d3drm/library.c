@@ -27,13 +27,31 @@ D3DRMQUATERNION * SDL_WINAPI D3DRMQuaternionMultiply(D3DRMQUATERNION *ret, const
     return ret;
 }
 
-D3DRMQUATERNION * SDL_WINAPI D3DRMQuaternionSlerp(D3DRMQUATERNION *ret, D3DRMQUATERNION *x, D3DRMQUATERNION *y, D3DVALUE alpha) {
-    (void) ret;
-    (void) x;
-    (void) y;
-    (void) alpha;
-    SDL_TriggerBreakpoint();
-    abort();
+D3DRMQUATERNION * SDL_WINAPI D3DRMQuaternionSlerp(D3DRMQUATERNION *ret, const D3DRMQUATERNION *x, const D3DRMQUATERNION *y, D3DVALUE alpha) {
+    D3DVALUE c = x->s * y->s + D3DRMVectorDotProduct(&x->v, &y->v);
+    const bool neg = c < 0.0f;
+    D3DVALUE f_x, f_y;
+    if (neg) {
+        c = -c;
+    }
+    if (1.0f - c >= 0.0001f) {
+        const D3DVALUE a = SDL_acosf(c);
+        const D3DVALUE s = SDL_sinf(a);
+        const D3DVALUE f = 1 / s;
+        f_x = f * SDL_sinf(a - a * alpha);
+        f_y = f * SDL_sinf(a * alpha);
+    } else {
+        f_x = 1.f - alpha;
+        f_y = alpha;
+    }
+    if (neg) {
+        f_y = -f_y;
+    }
+    ret->s   = f_x * x->s   + f_y * y->s;
+    ret->v.x = f_x * x->v.x + f_y * y->v.x;
+    ret->v.y = f_x * x->v.y + f_y * y->v.y;
+    ret->v.z = f_x * x->v.z + f_y * y->v.z;
+    return ret;
 }
 
 D3DVECTOR * SDL_WINAPI D3DRMVectorAdd(D3DVECTOR *ret, const D3DVECTOR *x, const D3DVECTOR *y) {

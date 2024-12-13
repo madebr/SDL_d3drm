@@ -581,6 +581,48 @@ static const SDLTest_TestCaseReference d3drmD3DRMQuaternionMultiply  = {
     d3drm_D3DRMQuaternionMultiply, "d3drm_D3DRMQuaternionMultiply", "Test D3DRMQuaternionMultiply", TEST_ENABLED
 };
 
+static int SDLCALL d3drm_D3DRMQuaternionSlerp(void *arg) {
+    const float SQRT2_F = SDL_sqrtf(2.f);
+    const float SQRT3_F = SDL_sqrtf(3.f);
+    const struct {
+        D3DRMQUATERNION quat_in1;
+        D3DRMQUATERNION quat_in2;
+        D3DVALUE alpha_in;
+        D3DRMQUATERNION out;
+    } test_cases[] = {
+        { {1.f,       {{0.f},               {0.f},              {0.f}}},                {-1.f,      {{0.f},               {0.f},              {0.f}}},                  0.f,    {1.f,       {{0.f},               {0.f},              {0.f}}} },
+        { {1.f,       {{0.f},               {0.f},              {0.f}}},                {-1.f,      {{0.f},               {0.f},              {0.f}}},                  1.f,    {1.f,       {{0.f},               {0.f},              {0.f}}} },
+        { {1.f,       {{0.f},               {0.f},              {0.f}}},                { 0.f,      {{1/SQRT3_F},         {1/SQRT3_F},        {1/SQRT3_F}}},            0.f,    {1.f,       {{0.f},               {0.f},              {0.f}}} },
+        { {1.f,       {{0.f},               {0.f},              {0.f}}},                { 0.f,      {{1/SQRT3_F},         {1/SQRT3_F},        {1/SQRT3_F}}},            .5f,    {1/SQRT2_F, {{1/SQRT3_F/SQRT2_F}, {1/SQRT3_F/SQRT2_F},{1/SQRT3_F/SQRT2_F}}} },
+        { {1.f,       {{0.f},               {0.f},              {0.f}}},                { 0.f,      {{1/SQRT3_F},         {1/SQRT3_F},        {1/SQRT3_F}}},            1.f,    {0.f,       {{1/SQRT3_F},         {1/SQRT3_F},        {1/SQRT3_F}}} },
+        { {1.f,       {{0.f},               {0.f},              {0.f}}},                {-1.f,      {{0.f},               {0.f},              {0.f}}},                  0.f,    {1.f,       {{0.f},               {0.f},              {0.f}}} },
+        { {1.f,       {{0.f},               {0.f},              {0.f}}},                {-1.f,      {{0.f},               {0.f},              {0.f}}},                  1.f,    {1.f,       {{0.f},               {0.f},              {0.f}}} },
+    };
+    (void) arg;
+    for (unsigned i = 0; i < SDL_arraysize(test_cases); i++) {
+        const D3DRMQUATERNION quat_in1 = test_cases[i].quat_in1;
+        const D3DRMQUATERNION quat_in2 = test_cases[i].quat_in2;
+        const D3DVALUE alpha_in = test_cases[i].alpha_in;
+        const D3DRMQUATERNION ref_out = test_cases[i].out;
+        D3DRMQUATERNION out;
+        SDLTest_AssertPass("D3DRMQuaternionSlerp({%f, {%f, %f, %f}}, {%f, {%f, %f, %f}}, %f)", quat_in1.s, quat_in1.v.x, quat_in1.v.y, quat_in1.v.z, quat_in2.s, quat_in2.v.x, quat_in2.v.y, quat_in2.v.z, alpha_in);
+        D3DRMQUATERNION *rc = D3DRMQuaternionSlerp(&out, &quat_in1, &quat_in2, alpha_in);
+        SDLTest_AssertCheck(rc == &out, "D3DRMQuaternionSlerp returns correct pointer: got %p, expected %p", rc, &out);
+        double delta1 = float_delta(out.s, ref_out.s);
+        double delta2 = float_delta(out.v.x, ref_out.v.x);
+        double delta3 = float_delta(out.v.y, ref_out.v.y);
+        double delta4 = float_delta(out.v.z, ref_out.v.z);
+        SDLTest_AssertCheck(delta1 < EPSILON && delta2 < EPSILON && delta3 < EPSILON && delta4 < EPSILON,
+            "Got {%f, {%f, %f, %f}}, expected {%f, {%f, %f, %f}} (delta={%g, {%g, %g, %g}})",
+            out.s, out.v.x, out.v.y, out.v.z, ref_out.s, ref_out.v.x, ref_out.v.y, ref_out.v.z, delta1, delta2, delta3, delta4);
+    }
+    return TEST_COMPLETED;
+}
+
+static const SDLTest_TestCaseReference d3drmD3DRMQuaternionSlerp  = {
+    d3drm_D3DRMQuaternionSlerp, "d3drm_D3DRMQuaternionSlerp", "Test D3DRMQuaternionSlerp", TEST_ENABLED
+};
+
 static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMColorGetRed,
     &d3drmD3DRMColorGetGreen,
@@ -598,6 +640,7 @@ static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMQuaternionFromRotation,
     &d3drmD3DRMVectorCrossProduct,
     &d3drmD3DRMQuaternionMultiply,
+    &d3drmD3DRMQuaternionSlerp,
     NULL
 };
 
