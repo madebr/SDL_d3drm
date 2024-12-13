@@ -4,11 +4,14 @@
 #include <stdlib.h>
 
 D3DRMQUATERNION * SDL_WINAPI D3DRMQuaternionFromRotation(D3DRMQUATERNION *x, D3DVECTOR *axis, D3DVALUE theta) {
-    (void) x;
-    (void) axis;
-    (void) theta;
-    SDL_TriggerBreakpoint();
-    abort();
+    D3DRMVectorNormalize(axis);
+    float c = SDL_cosf(0.5f * theta);
+    float s = SDL_sinf(0.5f * theta);
+    x->s = c;
+    x->v.x = s * axis->x;
+    x->v.y = s * axis->y;
+    x->v.z = s * axis->z;
+    return x;
 }
 
 D3DRMQUATERNION * SDL_WINAPI D3DRMQuaternionMultiply(D3DRMQUATERNION *ret, D3DRMQUATERNION *x, D3DRMQUATERNION *y) {

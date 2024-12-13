@@ -463,6 +463,47 @@ static const SDLTest_TestCaseReference d3drmD3DRMVectorDotProduct  = {
     d3drm_D3DRMVectorDotProduct, "d3drm_D3DRMVectorDotProduct", "Test D3DRMVectorDotProduct", TEST_ENABLED
 };
 
+static int SDLCALL d3drm_D3DRMQuaternionFromRotation(void *arg) {
+    const float SQRT2_F = SDL_sqrtf(2.f);
+    const float SQRT3_F = SDL_sqrtf(3.f);
+    const struct {
+        D3DVECTOR v_in;
+        D3DVALUE rot_in;
+        D3DRMQUATERNION out;
+    } test_cases[] = {
+            { {{1.f},   {0.f},    {0.f}},   SDL_PI_F,   {0.f,       {{1.f},             {0.f},              {0.f}} }},
+            { {{.3f},   {.4f},    {0.f}},   SDL_PI_F/2, {SQRT2_F/2, {{SQRT2_F*.3f},     {SQRT2_F*.4f},      {0.f}} }},
+            { {{1.f},   {1.f},    {1.f}},   SDL_PI_F/3, {SQRT3_F/2, {{1/SQRT3_F/2},     {1/SQRT3_F/2},      {1/SQRT3_F/2}} }},
+            { {{0.f},   {3.f},    {4.f}},   -SDL_PI_F/2,{SQRT2_F/2, {{0.f},             {-SQRT2_F*.3f},     {-SQRT2_F*.4f}} }},
+    };
+    (void) arg;
+    for (unsigned i = 0; i < SDL_arraysize(test_cases); i++) {
+        const D3DVECTOR v_in = test_cases[i].v_in;
+        const D3DVALUE rot_in = test_cases[i].rot_in;
+        const D3DRMQUATERNION ref_out = test_cases[i].out;
+        D3DRMQUATERNION out;
+        D3DVECTOR in = v_in;
+        SDLTest_AssertPass("D3DRMQuaternionFromRotation({%f, %f, %f}, %f)", v_in.x, v_in.y, v_in.z, rot_in);
+        D3DRMQUATERNION *rc = D3DRMQuaternionFromRotation(&out, &in, rot_in);
+        SDLTest_AssertCheck(rc == &out, "D3DRMQuaternionFromRotation returns correct pointer: got %p, expected %p", rc, &out);
+        D3DVALUE norm_in_2 = in.x * in.x + in.y * in.y + in.z * in.z;
+        double delta = float_delta(norm_in_2, 1.);
+        SDLTest_AssertCheck(delta < EPSILON, "Input is now an input vector: norm^2 = %f (delta=%g)", norm_in_2, delta);
+        double delta1 = float_delta(out.s, ref_out.s);
+        double delta2 = float_delta(out.v.x, ref_out.v.x);
+        double delta3 = float_delta(out.v.y, ref_out.v.y);
+        double delta4 = float_delta(out.v.z, ref_out.v.z);
+        SDLTest_AssertCheck(delta1 < EPSILON && delta2 < EPSILON && delta3 < EPSILON && delta4 < EPSILON,
+            "Got {%f, {%f, %f, %f}}, expected {%f, {%f, %f, %f}} (delta={%g,{%g, %g, %g}})",
+            out.s, out.v.x, out.v.y, out.v.z, ref_out.s, ref_out.v.x, ref_out.v.y, ref_out.v.z, delta1, delta2, delta3, delta4);
+    }
+    return TEST_COMPLETED;
+}
+
+static const SDLTest_TestCaseReference d3drmD3DRMQuaternionFromRotation  = {
+    d3drm_D3DRMQuaternionFromRotation, "d3drm_D3DRMQuaternionFromRotation", "Test D3DRMQuaternionFromRotation", TEST_ENABLED
+};
+
 static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMColorGetRed,
     &d3drmD3DRMColorGetGreen,
@@ -477,6 +518,7 @@ static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMVectorNormalize,
     &d3drmD3DRMVectorScale,
     &d3drmD3DRMVectorDotProduct,
+    &d3drmD3DRMQuaternionFromRotation,
     NULL
 };
 
