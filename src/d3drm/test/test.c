@@ -431,6 +431,38 @@ static const SDLTest_TestCaseReference d3drmD3DRMVectorScale  = {
     d3drm_D3DRMVectorScale, "d3drm_D3DRMVectorScale", "Test D3DRMVectorScale", TEST_ENABLED
 };
 
+static int SDLCALL d3drm_D3DRMVectorDotProduct(void *arg) {
+    const struct {
+        D3DVECTOR v_in1;
+        D3DVECTOR v_in2;
+        D3DVALUE out;
+    } test_cases[] = {
+            { {{0.f},   {0.f},    {0.f}},   {{0.f},   {0.f},    {0.f}},  0.f },
+            { {{1.f},   {0.f},    {0.f}},   {{7.f},   {0.f},    {0.f}},  7.f },
+            { {{0.f},   {1.7f},   {0.f}},   {{0.f},   {5.1},    {0.f}},  8.67f },
+            { {{0.f},   {0.f},    {0.9f}},  {{0.f},   {0.f},    {3.6f}}, 3.24f },
+            { {{3.f},   {4.f},    {0.f}},   {{.6f},   {.8f},    {0.f}},  5.f },
+            { {{0.f},   {3.f},    {4.f}},   {{0.f},   {9.f},    {12.f}}, 75.f },
+            { {{3.f},   {0.f},    {4.f}},   {{.6f},   {0.f},    {.8f}},  5.f },
+            { {{3.f},   {4.f},    {12.f}},  {{9.f},   {12.f},   {36.f}}, 507.f },
+    };
+    (void) arg;
+    for (unsigned i = 0; i < SDL_arraysize(test_cases); i++) {
+        const D3DVECTOR v_in1 = test_cases[i].v_in1;
+        const D3DVECTOR v_in2 = test_cases[i].v_in2;
+        const D3DVALUE ref_out = test_cases[i].out;
+        SDLTest_AssertPass("D3DRMVectorDotProduct({%f, %f, %f}, {%f, %f, %f})", v_in1.x, v_in1.y, v_in1.z, v_in2.x, v_in2.y, v_in2.z);
+        D3DVALUE out = D3DRMVectorDotProduct(&v_in1, &v_in2);
+        double delta = float_delta(out, ref_out);
+        SDLTest_AssertCheck(delta < EPSILON, "Got %f, expected %f (delta=%g)", out, ref_out, delta);
+    }
+    return TEST_COMPLETED;
+}
+
+static const SDLTest_TestCaseReference d3drmD3DRMVectorDotProduct  = {
+    d3drm_D3DRMVectorDotProduct, "d3drm_D3DRMVectorDotProduct", "Test D3DRMVectorDotProduct", TEST_ENABLED
+};
+
 static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMColorGetRed,
     &d3drmD3DRMColorGetGreen,
@@ -444,6 +476,7 @@ static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMVectorRandom,
     &d3drmD3DRMVectorNormalize,
     &d3drmD3DRMVectorScale,
+    &d3drmD3DRMVectorDotProduct,
     NULL
 };
 
