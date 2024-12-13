@@ -317,6 +317,33 @@ static const SDLTest_TestCaseReference d3drmD3DRMVectorSubtract  = {
     d3drm_D3DRMVectorSubtract, "d3drm_D3DRMVectorSubtract", "Test D3DRMVectorSubtract", TEST_ENABLED
 };
 
+static int SDLCALL d3drm_D3DRMVectorModulus(void *arg) {
+    const struct {
+        D3DVECTOR in;
+        D3DVALUE out;
+    } test_cases[] = {
+        { {{0.f},   {0.f},    {0.f}},   0.f },
+        { {{3.f},   {4.f},    {0.f}},   5.f },
+        { {{0.f},   {3.f},    {4.f}},   5.f },
+        { {{3.f},   {0.f},    {4.f}},   5.f },
+        { {{3.f},   {4.f},    {12.f}},  13.f },
+    };
+    (void) arg;
+    for (unsigned i = 0; i < SDL_arraysize(test_cases); i++) {
+        const D3DVECTOR in = test_cases[i].in;
+        D3DVALUE ref_out = test_cases[i].out;
+        SDLTest_AssertPass("D3DRMVectorModulus({%f, %f, %f})", in.x, in.y, in.z);
+        D3DVALUE out = D3DRMVectorModulus(&in);
+        double delta = float_delta(ref_out, out);
+        SDLTest_AssertCheck(delta < EPSILON, "Got %f, expected %f (delta=%g)", out, ref_out, delta);
+    }
+    return TEST_COMPLETED;
+}
+
+static const SDLTest_TestCaseReference d3drmD3DRMVectorModulus  = {
+    d3drm_D3DRMVectorModulus, "d3drm_D3DRMVectorModulus", "Test D3DRMVectorModulus", TEST_ENABLED
+};
+
 static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMColorGetRed,
     &d3drmD3DRMColorGetGreen,
@@ -326,6 +353,7 @@ static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMCreateColorRGBA,
     &d3drmD3DRMVectorAdd,
     &d3drmD3DRMVectorSubtract,
+    &d3drmD3DRMVectorModulus,
     NULL
 };
 

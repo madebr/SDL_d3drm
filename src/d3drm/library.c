@@ -57,9 +57,8 @@ D3DVECTOR * SDL_WINAPI D3DRMVectorNormalize(D3DVECTOR *x) {
 }
 
 D3DVALUE SDL_WINAPI D3DRMVectorModulus(const D3DVECTOR *x) {
-    (void) x;
-    SDL_TriggerBreakpoint();
-    abort();
+    const D3DVECTOR copy = *x;
+    return SDL_sqrtf(copy.x * copy.x + copy.y * copy.y + copy.z * copy.z);
 }
 
 D3DVECTOR * SDL_WINAPI D3DRMVectorRandom(D3DVECTOR *ret) {
