@@ -51,9 +51,18 @@ D3DVALUE SDL_WINAPI D3DRMVectorDotProduct(const D3DVECTOR *x, const D3DVECTOR *y
 }
 
 D3DVECTOR * SDL_WINAPI D3DRMVectorNormalize(D3DVECTOR *x) {
-    (void) x;
-    SDL_TriggerBreakpoint();
-    abort();
+    D3DVALUE m = D3DRMVectorModulus(x);
+    if (m == 0.f) {
+        x->x = 1.f;
+        x->y = 0.f;
+        x->z = 0.f;
+    } else {
+        D3DVALUE s = 1.f / m;
+        x->x *= s;
+        x->y *= s;
+        x->z *= s;
+    }
+    return x;
 }
 
 D3DVALUE SDL_WINAPI D3DRMVectorModulus(const D3DVECTOR *x) {
@@ -69,9 +78,10 @@ D3DVECTOR * SDL_WINAPI D3DRMVectorRandom(D3DVECTOR *ret) {
         ret->z = 2.f * SDL_randf() - 1;
         m = D3DRMVectorModulus(ret);
     } while (m == 0.f);
-    ret->x /= m;
-    ret->y /= m;
-    ret->z /= m;
+    D3DVALUE s = 1.f / m;
+    ret->x *= s;
+    ret->y *= s;
+    ret->z *= s;
     return ret;
 }
 
