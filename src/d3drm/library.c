@@ -109,13 +109,20 @@ D3DVECTOR * SDL_WINAPI D3DRMVectorRandom(D3DVECTOR *ret) {
     return ret;
 }
 
-D3DVECTOR * SDL_WINAPI D3DRMVectorRotate(D3DVECTOR *ret, const D3DVECTOR *x, const D3DVECTOR *axis, const D3DVALUE theta) {
-    (void) ret;
-    (void) x;
-    (void) axis;
-    (void) theta;
-    SDL_TriggerBreakpoint();
-    abort();
+D3DVECTOR * SDL_WINAPI D3DRMVectorRotate(D3DVECTOR *ret, const D3DVECTOR *x, D3DVECTOR *axis, const D3DVALUE theta) {
+    D3DRMVectorNormalize(axis);
+    const D3DVALUE c = SDL_cosf(-theta);
+    const D3DVALUE s = SDL_sinf(-theta);
+    const D3DVALUE one_minus_c = 1.f - c;
+    const D3DVECTOR l_axis = *axis;
+    const D3DVECTOR l_x = *x;
+    const D3DVALUE com1 = l_axis.x * one_minus_c;
+    const D3DVALUE com2 = l_axis.y * one_minus_c * l_axis.z;
+    ret->x = (com1 * l_axis.z - l_axis.y * s) * l_x.z + (l_axis.z * s + com1 * l_axis.y) * l_x.y + (com1 * l_axis.x + c)                   * l_x.x;
+    ret->y = (com1 * l_axis.y - l_axis.z * s) * l_x.x + (l_axis.x * s + com2)            * l_x.z + (l_axis.y * one_minus_c * l_axis.y + c) * l_x.y;
+    ret->z = (l_axis.y * s + com1 * l_axis.z) * l_x.x + (com2 - l_axis.x * s)            * l_x.y + (l_axis.z * one_minus_c * l_axis.z + c) * l_x.z;
+    D3DRMVectorNormalize(ret);
+    return ret;
 }
 
 D3DVECTOR * SDL_WINAPI D3DRMVectorReflect(D3DVECTOR *ret, const D3DVECTOR *ray, const D3DVECTOR *normal) {

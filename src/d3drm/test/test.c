@@ -623,6 +623,50 @@ static const SDLTest_TestCaseReference d3drmD3DRMQuaternionSlerp  = {
     d3drm_D3DRMQuaternionSlerp, "d3drm_D3DRMQuaternionSlerp", "Test D3DRMQuaternionSlerp", TEST_ENABLED
 };
 
+static int SDLCALL d3drm_D3DRMVectorRotate(void *arg) {
+    const float SQRT3_F = SDL_sqrtf(3.f);
+    const struct {
+        D3DVECTOR vec_in;
+        D3DVECTOR axis_in;
+        D3DVALUE angle_in;
+        D3DVECTOR out;
+    } test_cases[] = {
+        { {{4.f}, {0.f}, {0.f}},  {{0.f}, {0.f}, {5.f}},   SDL_PI_F,    {{-1.f}, { 0.f}, { 0.f}} },
+        { {{9.f}, {0.f}, {0.f}},  {{0.f}, {0.f}, {5.f}},   SDL_PI_F/2,  {{ 0.f}, { 1.f}, { 0.f}} },
+        { {{3.f}, {0.f}, {0.f}},  {{0.f}, {0.f}, {5.f}},  -SDL_PI_F/2,  {{ 0.f}, {-1.f}, { 0.f}} },
+        { {{0.f}, {2.f}, {0.f}},  {{4.f}, {0.f}, {0.f}},   SDL_PI_F/2,  {{ 0.f}, { 0.f}, { 1.f}} },
+        { {{0.f}, {2.f}, {0.f}},  {{4.f}, {0.f}, {0.f}},  -SDL_PI_F/2,  {{ 0.f}, { 0.f}, {-1.f}} },
+        { {{0.f}, {0.f}, {2.f}},  {{4.f}, {0.f}, {0.f}},   SDL_PI_F/2,  {{ 0.f}, {-1.f}, { 0.f}} },
+        { {{0.f}, {0.f}, {2.f}},  {{4.f}, {0.f}, {0.f}},  -SDL_PI_F/2,  {{ 0.f}, { 1.f}, { 0.f}} },
+        { {{4.f}, {4.f}, {4.f}},  {{0.f}, {0.f}, {1.f}},   SDL_PI_F,    {{-1.f/SQRT3_F}, {-1.f/SQRT3_F}, { 1.f/SQRT3_F}} },
+    };
+    (void) arg;
+    for (unsigned i = 0; i < SDL_arraysize(test_cases); i++) {
+        const D3DVECTOR vec_in = test_cases[i].vec_in;
+        D3DVECTOR axis_in = test_cases[i].axis_in;
+        const D3DVALUE angle_in = test_cases[i].angle_in;
+        const D3DVECTOR ref_out = test_cases[i].out;
+        D3DVECTOR out;
+        SDLTest_AssertPass("D3DRMVectorRotate({%f, %f, %f}, {%f, %f, %f}, %f)", vec_in.x, vec_in.y, vec_in.z, axis_in.x, axis_in.y, axis_in.z, angle_in);
+        D3DVECTOR *rc = D3DRMVectorRotate(&out, &vec_in, &axis_in, angle_in);
+        SDLTest_AssertCheck(rc == &out, "D3DRMVectorRotate returns correct pointer: got %p, expected %p", rc, &out);
+        D3DVALUE norm_axis = axis_in.x * axis_in.x + axis_in.y * axis_in.y + axis_in.z * axis_in.z;
+        double delta_one = float_delta(1., norm_axis);
+        SDLTest_AssertCheck(delta_one < EPSILON, "D3DRMVectorRotate made normalized axis");
+        double delta1 = float_delta(out.x, ref_out.x);
+        double delta2 = float_delta(out.y, ref_out.y);
+        double delta3 = float_delta(out.z, ref_out.z);
+        SDLTest_AssertCheck(delta1 < EPSILON && delta2 < EPSILON && delta3 < EPSILON,
+            "Got {%f, %f, %f}, expected {%f, %f, %f} (delta={%g, %g, %g})",
+            out.x, out.y, out.z, ref_out.x, ref_out.y, ref_out.z, delta1, delta2, delta3);
+    }
+    return TEST_COMPLETED;
+}
+
+static const SDLTest_TestCaseReference d3drmD3DRMVectorRotate  = {
+    d3drm_D3DRMVectorRotate, "d3drm_D3DRMVectorRotate", "Test D3DRMVectorRotate", TEST_ENABLED
+};
+
 static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMColorGetRed,
     &d3drmD3DRMColorGetGreen,
@@ -641,6 +685,7 @@ static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMVectorCrossProduct,
     &d3drmD3DRMQuaternionMultiply,
     &d3drmD3DRMQuaternionSlerp,
+    &d3drmD3DRMVectorRotate,
     NULL
 };
 
