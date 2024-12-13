@@ -667,6 +667,40 @@ static const SDLTest_TestCaseReference d3drmD3DRMVectorRotate  = {
     d3drm_D3DRMVectorRotate, "d3drm_D3DRMVectorRotate", "Test D3DRMVectorRotate", TEST_ENABLED
 };
 
+static int SDLCALL d3drm_D3DRMVectorReflect(void *arg) {
+    const float SQRT2_F = SDL_sqrtf(2.f);
+    const struct {
+        D3DVECTOR ray;
+        D3DVECTOR normal;
+        D3DVECTOR out;
+    } test_cases[] = {
+        { {{ 0.f}, { 0.f}, { 1.f}},  {{ 0.f}, { 1.f}, { 0.f}}, {{ 0.f}, { 0.f}, {-1.f}} },
+        { {{-3.f}, {-4.f}, { 0.f}},  {{ 0.f}, { 1.f}, { 0.f}}, {{ 3.f}, {-4.f}, { 0.f}} },
+        { {{ 1.f}, { 1.f}, { 0.f}},  {{ -1/SQRT2_F}, { -1/SQRT2_F}, { 0.f}}, {{1.f}, {1.f}, { 0.f}} },
+    };
+    (void) arg;
+    for (unsigned i = 0; i < SDL_arraysize(test_cases); i++) {
+        const D3DVECTOR ray_in = test_cases[i].ray;
+        const D3DVECTOR normal_in = test_cases[i].normal;
+        const D3DVECTOR ref_out = test_cases[i].out;
+        D3DVECTOR out;
+        SDLTest_AssertPass("D3DRMVectorReflect({%f, %f, %f}, {%f, %f, %f})", ray_in.x, ray_in.y, ray_in.z, normal_in.x, normal_in.y, normal_in.z);
+        D3DVECTOR *rc = D3DRMVectorReflect(&out, &ray_in, &normal_in);
+        SDLTest_AssertCheck(rc == &out, "D3DRMVectorReflect returns correct pointer: got %p, expected %p", rc, &out);
+        double delta1 = float_delta(out.x, ref_out.x);
+        double delta2 = float_delta(out.y, ref_out.y);
+        double delta3 = float_delta(out.z, ref_out.z);
+        SDLTest_AssertCheck(delta1 < EPSILON && delta2 < EPSILON && delta3 < EPSILON,
+            "Got {%f, %f, %f}, expected {%f, %f, %f} (delta={%g, %g, %g})",
+            out.x, out.y, out.z, ref_out.x, ref_out.y, ref_out.z, delta1, delta2, delta3);
+    }
+    return TEST_COMPLETED;
+}
+
+static const SDLTest_TestCaseReference d3drmD3DRMVectorReflect  = {
+    d3drm_D3DRMVectorReflect, "d3drm_D3DRMVectorReflect", "Test D3DRMVectorReflect", TEST_ENABLED
+};
+
 static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMColorGetRed,
     &d3drmD3DRMColorGetGreen,
@@ -686,6 +720,7 @@ static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMQuaternionMultiply,
     &d3drmD3DRMQuaternionSlerp,
     &d3drmD3DRMVectorRotate,
+    &d3drmD3DRMVectorReflect,
     NULL
 };
 

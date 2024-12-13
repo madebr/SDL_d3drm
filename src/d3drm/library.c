@@ -126,11 +126,13 @@ D3DVECTOR * SDL_WINAPI D3DRMVectorRotate(D3DVECTOR *ret, const D3DVECTOR *x, D3D
 }
 
 D3DVECTOR * SDL_WINAPI D3DRMVectorReflect(D3DVECTOR *ret, const D3DVECTOR *ray, const D3DVECTOR *normal) {
-    (void) ret;
-    (void) ray;
-    (void) normal;
-    SDL_TriggerBreakpoint();
-    abort();
+    D3DVECTOR l_ray = *ray;
+    D3DVECTOR l_normal = *normal;
+    D3DVALUE dot_2 = 2.f * (l_normal.x * l_ray.x + l_normal.y * l_ray.y + l_normal.z * l_ray.z);
+    ret->x = l_normal.x * dot_2 - l_ray.x;
+    ret->y = l_normal.y * dot_2 - l_ray.y;
+    ret->z = l_normal.z * dot_2 - l_ray.z;
+    return ret;
 }
 
 D3DVECTOR * SDL_WINAPI D3DRMVectorScale(D3DVECTOR *ret, const D3DVECTOR *x, const D3DVALUE scale) {
