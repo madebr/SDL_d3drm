@@ -103,11 +103,10 @@ D3DVECTOR * SDL_WINAPI D3DRMVectorReflect(D3DVECTOR *ret, const D3DVECTOR *ray, 
 }
 
 D3DVECTOR * SDL_WINAPI D3DRMVectorScale(D3DVECTOR *ret, const D3DVECTOR *x, const D3DVALUE scale) {
-    (void) ret;
-    (void) x;
-    (void) scale;
-    SDL_TriggerBreakpoint();
-    abort();
+    ret->x = x->x * scale;
+    ret->y = x->y * scale;
+    ret->z = x->z * scale;
+    return ret;
 }
 
 D3DVECTOR * SDL_WINAPI D3DRMVectorSubtract(D3DVECTOR *ret, const D3DVECTOR *x, const D3DVECTOR *y) {

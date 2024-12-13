@@ -395,6 +395,42 @@ static const SDLTest_TestCaseReference d3drmD3DRMVectorNormalize  = {
     d3drm_D3DRMVectorNormalize, "d3drm_D3DRMVectorNormalize", "Test D3DRMVectorNormalize", TEST_ENABLED
 };
 
+static int SDLCALL d3drm_D3DRMVectorScale(void *arg) {
+    const struct {
+        D3DVECTOR v_in;
+        D3DVALUE scale_in;
+        D3DVECTOR out;
+    } test_cases[] = {
+            { {{0.f},   {0.f},    {0.f}},   2.f, {{0.f},   {0.f},    {0.f}},  },
+            { {{1.f},   {0.f},    {0.f}},   7.f, {{7.f},   {0.f},    {0.f}},  },
+            { {{0.f},   {1.7f},   {0.f}},   3.f, {{0.f},   {5.1},    {0.f}},  },
+            { {{0.f},   {0.f},    {0.9f}},  4.f, {{0.f},   {0.f},    {3.6f}}, },
+            { {{3.f},   {4.f},    {0.f}},   .2f, {{.6f},   {.8f},    {0.f}},  },
+            { {{0.f},   {3.f},    {4.f}},   3.f, {{0.f},   {9.f},    {12.f}}, },
+            { {{3.f},   {0.f},    {4.f}},   .2f, {{.6f},   {0.f},    {.8f}},  },
+            { {{3.f},   {4.f},    {12.f}},  3.f, {{9.f},   {12.f},   {36.f}}, },
+    };
+    (void) arg;
+    for (unsigned i = 0; i < SDL_arraysize(test_cases); i++) {
+        const D3DVECTOR v_in = test_cases[i].v_in;
+        const D3DVALUE scale_in = test_cases[i].scale_in;
+        const D3DVECTOR ref_out = test_cases[i].out;
+        D3DVECTOR out;
+        SDLTest_AssertPass("D3DRMVectorScale({%f, %f, %f}, %f)", v_in.x, v_in.y, v_in.z, scale_in);
+        D3DVECTOR *rc = D3DRMVectorScale(&out, &v_in, scale_in);
+        SDLTest_AssertCheck(rc == &out, "D3DRMVectorRandom returns correct pointer: got %p, expected %p", rc, &out);
+        double delta1 = float_delta(out.x, ref_out.x);
+        double delta2 = float_delta(out.y, ref_out.y);
+        double delta3 = float_delta(out.z, ref_out.z);
+        SDLTest_AssertCheck(delta1 < EPSILON && delta2 < EPSILON && delta3 < EPSILON, "Got {%f, %f, %f}, expected {%f, %f, %f} (delta={%g, %g, %g})", out.x, out.y, out.z, ref_out.x, ref_out.y, ref_out.z, delta1, delta2, delta3);
+    }
+    return TEST_COMPLETED;
+}
+
+static const SDLTest_TestCaseReference d3drmD3DRMVectorScale  = {
+    d3drm_D3DRMVectorScale, "d3drm_D3DRMVectorScale", "Test D3DRMVectorScale", TEST_ENABLED
+};
+
 static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMColorGetRed,
     &d3drmD3DRMColorGetGreen,
@@ -407,6 +443,7 @@ static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMVectorModulus,
     &d3drmD3DRMVectorRandom,
     &d3drmD3DRMVectorNormalize,
+    &d3drmD3DRMVectorScale,
     NULL
 };
 
