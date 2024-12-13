@@ -504,6 +504,42 @@ static const SDLTest_TestCaseReference d3drmD3DRMQuaternionFromRotation  = {
     d3drm_D3DRMQuaternionFromRotation, "d3drm_D3DRMQuaternionFromRotation", "Test D3DRMQuaternionFromRotation", TEST_ENABLED
 };
 
+static int SDLCALL d3drm_D3DRMVectorCrossProduct(void *arg) {
+    const struct {
+        D3DVECTOR v_in1;
+        D3DVECTOR v_in2;
+        D3DVECTOR out;
+    } test_cases[] = {
+        { {{1.f},   {0.f},    {0.f}},   {{0.f},   {1.f},    {0.f}}, {{0.f},   {0.f},    {1.f}}},
+        { {{0.f},   {1.f},    {0.f}},   {{1.f},   {0.f},    {0.f}}, {{0.f},   {0.f},    {-1.f}}},
+        { {{0.f},   {1.f},    {0.f}},   {{0.f},   {0.f},    {1.f}}, {{1.f},   {0.f},    {0.f}}},
+        { {{0.f},   {0.f},    {1.f}},   {{0.f},   {1.f},    {0.f}}, {{-1.f},  {0.f},    {0.f}}},
+        { {{0.f},   {0.f},    {1.f}},   {{1.f},   {0.f},    {0.f}}, {{0.f},   {1.f},    {0.f}}},
+        { {{1.f},   {0.f},    {0.f}},   {{0.f},   {0.f},    {1.f}}, {{0.f},   {-1.f},    {0.f}}},
+    };
+    (void) arg;
+    for (unsigned i = 0; i < SDL_arraysize(test_cases); i++) {
+        const D3DVECTOR v_in1 = test_cases[i].v_in1;
+        const D3DVECTOR v_in2 = test_cases[i].v_in2;
+        const D3DVECTOR ref_out = test_cases[i].out;
+        D3DVECTOR out;
+        SDLTest_AssertPass("D3DRMVectorCrossProduct({%f, %f, %f}, {%f, %f, %f})", v_in1.x, v_in1.y, v_in1.z, v_in2.x, v_in2.y, v_in2.z);
+        D3DVECTOR *rc = D3DRMVectorCrossProduct(&out, &v_in1, &v_in2);
+        SDLTest_AssertCheck(rc == &out, "D3DRMVectorCrossProduct returns correct pointer: got %p, expected %p", rc, &out);
+        double delta1 = float_delta(out.x, ref_out.x);
+        double delta2 = float_delta(out.y, ref_out.y);
+        double delta3 = float_delta(out.z, ref_out.z);
+        SDLTest_AssertCheck(delta1 < EPSILON && delta2 < EPSILON && delta3 < EPSILON,
+            "Got {%f, %f, %f}, expected {%f, %f, %f} (delta={%g, %g, %g})",
+            out.x, out.y, out.z, ref_out.x, ref_out.y, ref_out.z, delta1, delta2, delta3);
+    }
+    return TEST_COMPLETED;
+}
+
+static const SDLTest_TestCaseReference d3drmD3DRMVectorCrossProduct  = {
+    d3drm_D3DRMVectorCrossProduct, "d3drm_D3DRMVectorCrossProduct", "Test D3DRMVectorCrossProduct", TEST_ENABLED
+};
+
 static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMColorGetRed,
     &d3drmD3DRMColorGetGreen,
@@ -519,6 +555,7 @@ static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMVectorScale,
     &d3drmD3DRMVectorDotProduct,
     &d3drmD3DRMQuaternionFromRotation,
+    &d3drmD3DRMVectorCrossProduct,
     NULL
 };
 

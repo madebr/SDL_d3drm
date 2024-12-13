@@ -39,11 +39,12 @@ D3DVECTOR * SDL_WINAPI D3DRMVectorAdd(D3DVECTOR *ret, const D3DVECTOR *x, const 
 }
 
 D3DVECTOR * SDL_WINAPI D3DRMVectorCrossProduct(D3DVECTOR *ret, const D3DVECTOR *x, const D3DVECTOR *y) {
-    (void) ret;
-    (void) x;
-    (void) y;
-    SDL_TriggerBreakpoint();
-    abort();
+    const D3DVECTOR a = *x;
+    const D3DVECTOR b = *y;
+    ret->x = a.y * b.z - a.z * b.y;
+    ret->y = a.z * b.x - a.x * b.z;
+    ret->z = a.x * b.y - a.y * b.x;
+    return ret;
 }
 
 D3DVALUE SDL_WINAPI D3DRMVectorDotProduct(const D3DVECTOR *x, const D3DVECTOR *y) {
