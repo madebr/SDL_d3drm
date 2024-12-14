@@ -701,6 +701,52 @@ static const SDLTest_TestCaseReference d3drmD3DRMVectorReflect  = {
     d3drm_D3DRMVectorReflect, "d3drm_D3DRMVectorReflect", "Test D3DRMVectorReflect", TEST_ENABLED
 };
 
+static int SDLCALL d3drm_D3DRMMatrixFromQuaternion(void *arg) {
+    const float COS45_F = SDL_cosf(SDL_PI_F / 4);
+    const float SIN45_F = SDL_sinf(SDL_PI_F / 4);
+    const float COS22_5_F = SDL_cosf(SDL_PI_F / 8);
+    const float SIN22_5_F = SDL_sinf(SDL_PI_F / 8);
+    const struct {
+        D3DRMQUATERNION rot;
+        D3DRMMATRIX4D out;
+    } test_cases[] = {
+        { { 1.f, { {0.f}, {0.f}, {0.f} }},         { { 1.f, 0.f, 0.f, 0.f}, { 0.f, 1.f, 0.f, 0.f}, { 0.f, 0.f, 1.f, 0.f}, { 0.f, 0.f, 0.f, 1.f} } },
+        { { 0.f, { {1.f}, {0.f}, {0.f} }},         { { 1.f, 0.f, 0.f, 0.f}, { 0.f,-1.f, 0.f, 0.f}, { 0.f, 0.f,-1.f, 0.f}, { 0.f, 0.f, 0.f, 1.f} } },
+        { { COS45_F, { {SIN45_F}, {0.f}, {0.f} }}, { { 1.f, 0.f, 0.f, 0.f}, { 0.f, 0.f,-1.f, 0.f}, { 0.f, 1.f, 0.f, 0.f}, { 0.f, 0.f, 0.f, 1.f} } },
+        { { COS45_F, { {0.f}, {SIN45_F}, {0.f} }}, { { 0.f, 0.f, 1.f, 0.f}, { 0.f, 1.f, 0.f, 0.f}, {-1.f, 0.f, 0.f, 0.f}, { 0.f, 0.f, 0.f, 1.f} } },
+        { { COS45_F, { {0.f}, {0.f}, {SIN45_F} }}, { { 0.f,-1.f, 0.f, 0.f}, { 1.f, 0.f, 0.f, 0.f}, { 0.f, 0.f, 1.f, 0.f}, { 0.f, 0.f, 0.f, 1.f} } },
+        { { COS22_5_F, { {0.f}, {0.f}, {SIN22_5_F} }}, { { COS45_F,-SIN45_F, 0.f, 0.f}, { SIN45_F, COS45_F, 0.f, 0.f}, { 0.f, 0.f, 1.f, 0.f}, { 0.f, 0.f, 0.f, 1.f} } },
+    };
+    (void) arg;
+    for (unsigned i = 0; i < SDL_arraysize(test_cases); i++) {
+        const D3DRMQUATERNION rot_in = test_cases[i].rot;
+        D3DRMMATRIX4D ref_out;
+        SDL_memcpy(ref_out, test_cases[i].out, sizeof(ref_out));
+        D3DRMMATRIX4D out;
+        SDLTest_AssertPass("D3DRMMatrixFromQuaternion({%f, {%f, %f, %f})", rot_in.s, rot_in.v.x, rot_in.v.y, rot_in.v.z);
+        D3DRMMatrixFromQuaternion(out, &rot_in);
+        double deltas[4][4];
+        bool good = true;
+        for (unsigned j = 0; j < 4; j++) {
+            for (unsigned k = 0; k < 4; k++) {
+                deltas[j][k] = float_delta(ref_out[j][k], out[j][k]);
+                good = good && deltas[j][k] < EPSILON;
+            }
+        }
+        SDLTest_Log("Got {{%f, %f, %f, %f}, {%f, %f, %f, %f}, {%f, %f, %f, %f}, {%f, %f, %f, %f}},",
+            out[0][0], out[0][1], out[0][2], out[0][3], out[1][0], out[1][1], out[1][2], out[1][3], out[2][0], out[2][1], out[2][2], out[2][3], out[3][0], out[3][1], out[3][2], out[3][3]);
+        SDLTest_Log("expected {{%f, %f, %f, %f}, {%f, %f, %f, %f}, {%f, %f, %f, %f}, {%f, %f, %f, %f}},",
+            ref_out[0][0], ref_out[0][1], ref_out[0][2], ref_out[0][3], ref_out[1][0], ref_out[1][1], ref_out[1][2], ref_out[1][3], ref_out[2][0], ref_out[2][1], ref_out[2][2], ref_out[2][3], ref_out[3][0], ref_out[3][1], ref_out[3][2], ref_out[3][3]);
+        SDLTest_AssertCheck(good, "deltas={{%g, %g, %g, %g}, {%g, %g, %g, %g}, {%g, %g, %g, %g}, {%g, %g, %g, %g}},",
+            deltas[0][0], deltas[0][1], deltas[0][2], deltas[0][3], deltas[1][0], deltas[1][1], deltas[1][2], deltas[1][3], deltas[2][0], deltas[2][1], deltas[2][2], deltas[2][3], deltas[3][0], deltas[3][1], deltas[3][2], deltas[3][3]);
+    }
+    return TEST_COMPLETED;
+}
+
+static const SDLTest_TestCaseReference d3drmD3DRMMatrixFromQuaternion  = {
+    d3drm_D3DRMMatrixFromQuaternion, "d3drm_D3DRMMatrixFromQuaternion", "Test D3DRMMatrixFromQuaternion", TEST_ENABLED
+};
+
 static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMColorGetRed,
     &d3drmD3DRMColorGetGreen,
@@ -721,6 +767,7 @@ static const SDLTest_TestCaseReference *d3drmTests[] = {
     &d3drmD3DRMQuaternionSlerp,
     &d3drmD3DRMVectorRotate,
     &d3drmD3DRMVectorReflect,
+    &d3drmD3DRMMatrixFromQuaternion,
     NULL
 };
 

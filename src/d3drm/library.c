@@ -174,10 +174,32 @@ D3DVALUE SDL_WINAPI D3DRMColorGetRed(D3DCOLOR c) {
 }
 
 void SDL_WINAPI D3DRMMatrixFromQuaternion(D3DRMMATRIX4D m, const D3DRMQUATERNION *q) {
-    (void) m;
-    (void) q;
-    SDL_TriggerBreakpoint();
-    abort();
+    const D3DRMQUATERNION l_q = *q;
+    const D3DVALUE yy = 2.f * l_q.v.y * l_q.v.y;
+    const D3DVALUE zz = 2.f * l_q.v.z * l_q.v.z;
+    m[0][0] = 1.f - yy - zz;
+    const D3DVALUE xy = 2.f * l_q.v.y * l_q.v.x;
+    const D3DVALUE zs = 2.f * l_q.v.z * l_q.s;
+    m[0][1] = xy - zs;
+    const D3DVALUE zx = 2.f * l_q.v.z * l_q.v.x;
+    const D3DVALUE ys = 2.f * l_q.v.y * l_q.s;
+    m[0][2] = ys + zx;
+    m[0][3] = 0.f;
+    m[1][0] = zs + xy;
+    const D3DVALUE xx = 1.f - 2.f * l_q.v.x * l_q.v.x;
+    m[1][1] = xx - zz;
+    const D3DVALUE yz = 2.f * l_q.v.y * l_q.v.z;
+    const D3DVALUE xs = 2.f * l_q.v.x * l_q.s;
+    m[1][2] = yz - xs;
+    m[1][3] = 0.f;
+    m[2][0] = zx - ys;
+    m[2][1] = xs + yz;
+    m[2][2] = xx - yy;
+    m[2][3] = 0.f;
+    m[3][0] = 0.f;
+    m[3][1] = 0.f;
+    m[3][2] = 0.f;
+    m[3][3] = 1.f;
 }
 
 SDL_STDAPI Direct3DRMCreate(LPDIRECT3DRM SDL_FAR *lplpDirect3DRM) {
