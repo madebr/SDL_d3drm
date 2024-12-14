@@ -1,4 +1,3 @@
-#include "library.h"
 #include "SDL_d3drm.h"
 
 #include <stdlib.h>
@@ -200,10 +199,4 @@ void SDL_WINAPI D3DRMMatrixFromQuaternion(D3DRMMATRIX4D m, const D3DRMQUATERNION
     m[3][1] = 0.f;
     m[3][2] = 0.f;
     m[3][3] = 1.f;
-}
-
-SDL_STDAPI Direct3DRMCreate(LPDIRECT3DRM SDL_FAR *lplpDirect3DRM) {
-    (void) lplpDirect3DRM;
-    SDL_TriggerBreakpoint();
-    abort();
 }

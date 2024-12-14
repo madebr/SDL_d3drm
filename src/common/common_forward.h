@@ -19,6 +19,14 @@ void *get_library_symbol(LIBRARY library, const char *name) {
 static void unload_library(LIBRARY library) {
     FreeLibrary(library);
 }
+static const char *get_platform_env_variable(const char *n) {
+    static char buffer[MAX_PATH];
+    if (!GetEnvironmentVariable(n, buffer, sizeof(buffer))) {
+        return NULL;
+    }
+    buffer[sizeof(buffer) - 1] = '\0';
+    return buffer;
+}
 #define EXPORT extern __declspec(dllexport)
 #else
 #include <dlfcn.h>
@@ -47,15 +55,18 @@ void *get_library_symbol(LIBRARY library, const char *name) {
 static void unload_library(LIBRARY library) {
     dlclose(library);
 }
+static const char *get_platform_env_variable(const char *n) {
+    return getenv(n);
+}
 #define EXPORT extern
 #endif
 
 static const char *get_library_name(void) {
-    const char *n = getenv(ENV_VARIABLE);
+    const char *n = get_platform_env_variable(ENV_VARIABLE);
     if (n != NULL) {
         return n;
     }
-#ifdef __WIN32
+#ifdef _WIN32
     return WIN_DLL;
 #elif defined(__APPLE__)
     return APPLE_DYLIB;

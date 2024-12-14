@@ -21,7 +21,11 @@
 
 typedef int SDL_BOOL;
 typedef SDL_GUID *SDL_LPGUID;
-typedef SDL_GUID SDL_REFIID;
+#ifdef __cplusplus
+typedef const SDL_GUID &SDL_REFIID;
+#else
+typedef const SDL_GUID *SDL_REFIID;
+#endif
 typedef SDL_GUID SDL_IID;
 typedef SDL_IID *SDL_LPIID;
 #ifdef __cplusplus
@@ -32,7 +36,7 @@ typedef SDL_IID *SDL_LPIID;
 typedef SDL_GUID SDL_REFCLSID;
 typedef Uint32 SDL_ULONG;
 typedef Sint32 SDL_LONG;
-typedef Uint32 SDL_HRESULT;
+typedef Sint32 SDL_HRESULT;
 typedef Uint32 SDL_DWORD;
 typedef Uint16 SDL_WORD;
 typedef Uint8 SDL_BYTE;
@@ -59,10 +63,10 @@ typedef const char SDL_LPCTSTR;
 #define SDL_PASCAL SDL_STDCALL
 
 #ifdef SDL_INITGUID
-#define SDL_DEFINE_GUID(name,l,w1,w2,b1,b2,b3,b4,b5,b6,b7,b8) SDL_EXTERN_C const SDL_GUID DECLSPEC_SELECTANY name = { l, w1, w2, { b1, b2, b3, b4, b5, b6, b7, b8 } }
+#define SDL_DEFINE_GUID(name,l,w1,w2,b1,b2,b3,b4,b5,b6,b7,b8) SDL_EXTERN_C const SDL_GUID name = {{ (l >> 0) & 0xff, (l >> 8) & 0xff, (l >> 16) & 0xff, (l >> 24) & 0xff, (w1 >> 0) & 0xff, (w1 >> 8) & 0xff, (w2 >> 0) & 0xff, (w2 >> 8) & 0xff, b1, b2, b3, b4, b5, b6, b7, b8 }}
 #else
 /* __declspec(selectany) must be applied to initialized objects on GCC 5 hence must not be used here. */
-#define SDL_DEFINE_GUID(name,l,w1,w2,b1,b2,b3,b4,b5,b6,b7,b8) SDL_EXTERN_C const SDL_GUID name
+#define SDL_DEFINE_GUID(name,l,w1,w2,b1,b2,b3,b4,b5,b6,b7,b8) SDL_EXTERN_C extern const SDL_GUID name
 #endif
 
 #ifdef __cplusplus
@@ -92,41 +96,62 @@ typedef const char SDL_LPCTSTR;
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) kind; \
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) kind
 
-#define SDL_INTERFACE IUnknown
-SDL_DECLARE_INTERFACE(IUnknown)
+#define SDL_INTERFACE SDL_IUnknown
+SDL_DECLARE_INTERFACE(SDL_IUnknown)
 {
     SDL_IUNKNOWN_METHODS(SDL_PURE);
 };
 #undef SDL_INTERFACE
 
-typedef struct tagRECT {
+#if !defined(__cplusplus) || defined(CINTERFACE)
+#define IUnknown_QueryInterface(ptr,a,b)    ptr->lpVtbl->QueryInterface(ptr,a,b)
+#define IUnknown_AddRef(ptr)                ptr->lpVtbl->AddRef(ptr)
+#define IUnknown_Release(ptr)               ptr->lpVtbl->Release(ptr)
+#endif
+
+typedef struct {
     SDL_LONG left;
     SDL_LONG top;
     SDL_LONG right;
     SDL_LONG bottom;
-} RECT,*PRECT,*NPRECT,*LPRECT;
+} SDL_RECT,*SDL_PRECT,*SDL_NPRECT,*SDL_LPRECT;
 
-typedef IUnknown *SDL_LPUNKNOWN;
+typedef SDL_IUnknown *SDL_LPUNKNOWN;
 
-typedef struct tagPALETTEENTRY {
+typedef struct {
     SDL_BYTE peRed;
     SDL_BYTE peGreen;
     SDL_BYTE peBlue;
     SDL_BYTE peFlags;
-} PALETTEENTRY,*PPALETTEENTRY,*LPPALETTEENTRY;
+} SDL_PALETTEENTRY,*SDL_PPALETTEENTRY,*SDL_LPPALETTEENTRY;
 
-typedef struct _RGNDATAHEADER {
+typedef struct {
     SDL_DWORD dwSize;
     SDL_DWORD iType;
     SDL_DWORD nCount;
     SDL_DWORD nRgnSize;
-    RECT rcBound;
-} RGNDATAHEADER,*PRGNDATAHEADER;
+    SDL_RECT rcBound;
+} SDL_RGNDATAHEADER,*SDL_PRGNDATAHEADER;
 
-typedef struct _RGNDATA {
-    RGNDATAHEADER rdh;
+typedef struct {
+    SDL_RGNDATAHEADER rdh;
     char Buffer[1];
-} RGNDATA,*PRGNDATA,*NPRGNDATA,*LPRGNDATA;
+} SDL_RGNDATA,*SDL_PRGNDATA,*SDL_NPRGNDATA,*SDL_LPRGNDATA;
 
+#define SDL_S_OK            0x00000000
+#define SDL_E_ABORT         0x80004004
+#define SDL_E_ACCESSDENIED  0x80070005
+#define SDL_E_FAIL          0x80004005
+#define SDL_E_HANDLE        0x80070006
+#define SDL_E_INVALIDARG    0x80070057
+#define SDL_E_NOINTERFACE   0x80004002
+#define SDL_E_NOTIMPL       0x80004001
+#define SDL_E_OUTOFMEMORY   0x8007000E
+#define SDL_E_POINTER       0x80004003
+#define SDL_E_UNEXPECTED    0x8000FFFF
 
+#define SDL_SUCCEEDED(hr)   ((SDL_HRESULT)(hr) >= 0)
+#define SDL_FAILED(hr)      ((SDL_HRESULT)(hr) < 0)
+
+#define SDL_MAKE_HRESULT(sev,fac,code) ((SDL_HRESULT) (((Uint32)(sev)<<31) | ((Uint32)(fac)<<16) | ((Uint32)(code))))
 #endif // SDL_WINGLUE_H

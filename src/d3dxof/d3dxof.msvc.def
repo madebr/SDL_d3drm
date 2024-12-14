@@ -1,0 +1,2 @@
+EXPORTS
+    DirectXFileCreate = _DirectXFileCreate@4

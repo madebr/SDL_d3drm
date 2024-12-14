@@ -142,17 +142,13 @@ typedef void (SDL_CDECL *D3DRMOBJECTCALLBACK)(struct IDirect3DRMObject *obj, voi
 typedef void (SDL_CDECL *D3DRMFRAMEMOVECALLBACK)(struct IDirect3DRMFrame *frame, void *ctx, D3DVALUE delta);
 typedef void (SDL_CDECL *D3DRMFRAME3MOVECALLBACK)(struct IDirect3DRMFrame3 *frame, void *ctx, D3DVALUE delta);
 typedef void (SDL_CDECL *D3DRMUPDATECALLBACK)(struct IDirect3DRMDevice *device, void *ctx, int count, D3DRECT *rects);
-typedef void (SDL_CDECL *D3DRMDEVICE3UPDATECALLBACK)(struct IDirect3DRMDevice3 *device, void *ctx,
-        int count, D3DRECT *rects);
-typedef int (SDL_CDECL *D3DRMUSERVISUALCALLBACK)(struct IDirect3DRMUserVisual *visual, void *ctx,
-        D3DRMUSERVISUALREASON reason, struct IDirect3DRMDevice *device, struct IDirect3DRMViewport *viewport);
+typedef void (SDL_CDECL *D3DRMDEVICE3UPDATECALLBACK)(struct IDirect3DRMDevice3 *device, void *ctx, int count, D3DRECT *rects);
+typedef int (SDL_CDECL *D3DRMUSERVISUALCALLBACK)(struct IDirect3DRMUserVisual *visual, void *ctx, D3DRMUSERVISUALREASON reason, struct IDirect3DRMDevice *device, struct IDirect3DRMViewport *viewport);
 typedef SDL_HRESULT (SDL_CDECL *D3DRMLOADTEXTURECALLBACK)(char *tex_name, void *arg, struct IDirect3DRMTexture **texture);
 typedef SDL_HRESULT (SDL_CDECL *D3DRMLOADTEXTURE3CALLBACK)(char *tex_name, void *arg, struct IDirect3DRMTexture3 **texture);
 typedef void (SDL_CDECL *D3DRMLOADCALLBACK)(struct IDirect3DRMObject *object, SDL_REFIID objectguid, void *arg);
-typedef SDL_HRESULT (SDL_CDECL *D3DRMDOWNSAMPLECALLBACK)(struct IDirect3DRMTexture3 *texture, void *ctx,
-        IDirectDrawSurface *src_surface, IDirectDrawSurface *dst_surface);
-typedef SDL_HRESULT (SDL_CDECL *D3DRMVALIDATIONCALLBACK)(struct IDirect3DRMTexture3 *texture, void *ctx,
-        SDL_DWORD flags, SDL_DWORD rect_count, RECT *rects);
+typedef SDL_HRESULT (SDL_CDECL *D3DRMDOWNSAMPLECALLBACK)(struct IDirect3DRMTexture3 *texture, void *ctx, IDirectDrawSurface *src_surface, IDirectDrawSurface *dst_surface);
+typedef SDL_HRESULT (SDL_CDECL *D3DRMVALIDATIONCALLBACK)(struct IDirect3DRMTexture3 *texture, void *ctx, SDL_DWORD flags, SDL_DWORD rect_count, SDL_RECT *rects);
 
 typedef struct _D3DRMPICKDESC
 {
@@ -179,12 +175,12 @@ typedef struct _D3DRMPICKDESC2
 #undef GetClassName
 #endif
 #define SDL_INTERFACE IDirect3DRMObject
-SDL_DECLARE_INTERFACE_(IDirect3DRMObject,IUnknown)
+SDL_DECLARE_INTERFACE_(IDirect3DRMObject,SDL_IUnknown)
 {
     /*** IUnknown methods ***/
     SDL_IUNKNOWN_METHODS(SDL_PURE);
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -232,7 +228,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMObject,IUnknown)
 #undef GetClassName
 #endif
 #define SDL_INTERFACE IDirect3DRMObject2
-SDL_DECLARE_INTERFACE_(IDirect3DRMObject2,IUnknown)
+SDL_DECLARE_INTERFACE_(IDirect3DRMObject2,SDL_IUnknown)
 {
     /*** IUnknown methods ***/
     SDL_STDMETHOD_(SDL_HRESULT,QueryInterface)(SDL_THIS_ SDL_REFIID riid, void** ppvObject) SDL_PURE;
@@ -240,7 +236,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMObject2,IUnknown)
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject2 methods ***/
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(GetClientData)(SDL_THIS_ SDL_DWORD id, void **data) SDL_PURE;
     SDL_STDMETHOD(GetDirect3DRM)(SDL_THIS_ struct IDirect3DRM **d3drm) SDL_PURE;
@@ -294,7 +290,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMVisual,IDirect3DRMObject)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -349,7 +345,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMDevice,IDirect3DRMObject)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -476,7 +472,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMDevice2,IDirect3DRMDevice)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -621,7 +617,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMDevice3,IDirect3DRMObject)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -781,7 +777,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMViewport,IDirect3DRMObject)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -921,7 +917,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMViewport2,IDirect3DRMObject)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -1069,7 +1065,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMFrame,IDirect3DRMVisual)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -1302,7 +1298,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMFrame2,IDirect3DRMFrame)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -1584,7 +1580,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMFrame3,IDirect3DRMVisual)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -1600,7 +1596,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMFrame3,IDirect3DRMVisual)
     SDL_STDMETHOD(AddTranslation)(SDL_THIS_ D3DRMCOMBINETYPE, D3DVALUE x, D3DVALUE y, D3DVALUE z) SDL_PURE;
     SDL_STDMETHOD(AddScale)(SDL_THIS_ D3DRMCOMBINETYPE, D3DVALUE sx, D3DVALUE sy, D3DVALUE sz) SDL_PURE;
     SDL_STDMETHOD(AddRotation)(SDL_THIS_ D3DRMCOMBINETYPE, D3DVALUE x, D3DVALUE y, D3DVALUE z, D3DVALUE theta) SDL_PURE;
-    SDL_STDMETHOD(AddVisual)(SDL_THIS_ IUnknown *visual) SDL_PURE;
+    SDL_STDMETHOD(AddVisual)(SDL_THIS_ IDirect3DRMVisual *visual) SDL_PURE;
     SDL_STDMETHOD(GetChildren)(SDL_THIS_ struct IDirect3DRMFrameArray **children) SDL_PURE;
     SDL_STDMETHOD_(D3DCOLOR, GetColor)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD(GetLights)(SDL_THIS_ struct IDirect3DRMLightArray **lights) SDL_PURE;
@@ -1614,7 +1610,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMFrame3,IDirect3DRMVisual)
     SDL_STDMETHOD(GetTransform)(SDL_THIS_ IDirect3DRMFrame3 *reference, D3DRMMATRIX4D matrix) SDL_PURE;
     SDL_STDMETHOD(GetVelocity)(SDL_THIS_ IDirect3DRMFrame3 *reference, D3DVECTOR *return_velocity, SDL_BOOL with_rotation) SDL_PURE;
     SDL_STDMETHOD(GetOrientation)(SDL_THIS_ IDirect3DRMFrame3 *reference, D3DVECTOR *dir, D3DVECTOR *up) SDL_PURE;
-    SDL_STDMETHOD(GetVisuals)(SDL_THIS_ SDL_DWORD *count, IUnknown **visuals) SDL_PURE;
+    SDL_STDMETHOD(GetVisuals)(SDL_THIS_ SDL_DWORD *count, SDL_IUnknown **visuals) SDL_PURE;
     SDL_STDMETHOD(InverseTransform)(SDL_THIS_ D3DVECTOR *d, D3DVECTOR *s) SDL_PURE;
     SDL_STDMETHOD(Load)(SDL_THIS_ void *filename, void *name, D3DRMLOADOPTIONS flags,
             D3DRMLOADTEXTURE3CALLBACK cb, void *ctx) SDL_PURE;
@@ -1624,7 +1620,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMFrame3,IDirect3DRMVisual)
     SDL_STDMETHOD(DeleteChild)(SDL_THIS_ IDirect3DRMFrame3 *child) SDL_PURE;
     SDL_STDMETHOD(DeleteLight)(SDL_THIS_ struct IDirect3DRMLight *light) SDL_PURE;
     SDL_STDMETHOD(DeleteMoveCallback)(SDL_THIS_ D3DRMFRAME3MOVECALLBACK cb, void *ctx) SDL_PURE;
-    SDL_STDMETHOD(DeleteVisual)(SDL_THIS_ IUnknown *visual) SDL_PURE;
+    SDL_STDMETHOD(DeleteVisual)(SDL_THIS_ SDL_IUnknown *visual) SDL_PURE;
     SDL_STDMETHOD_(D3DCOLOR, GetSceneBackground)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD(GetSceneBackgroundDepth)(SDL_THIS_ IDirectDrawSurface **surface) SDL_PURE;
     SDL_STDMETHOD_(D3DCOLOR, GetSceneFogColor)(SDL_THIS) SDL_PURE;
@@ -1882,7 +1878,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMMesh,IDirect3DRMVisual)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -1997,7 +1993,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMProgressiveMesh,IDirect3DRMVisual)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -2107,7 +2103,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMShadow,IDirect3DRMVisual)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -2166,7 +2162,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMShadow2,IDirect3DRMVisual)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -2175,11 +2171,11 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMShadow2,IDirect3DRMVisual)
     SDL_STDMETHOD(GetName)(SDL_THIS_ SDL_DWORD *size, char *name) SDL_PURE;
     SDL_STDMETHOD(GetClassName)(SDL_THIS_ SDL_DWORD *size, char *name) SDL_PURE;
     /*** IDirect3DRMShadow methods ***/
-    SDL_STDMETHOD(Init)(SDL_THIS_ IUnknown *object, struct IDirect3DRMLight *light,
+    SDL_STDMETHOD(Init)(SDL_THIS_ SDL_IUnknown *object, struct IDirect3DRMLight *light,
             D3DVALUE px, D3DVALUE py, D3DVALUE pz, D3DVALUE nx, D3DVALUE ny, D3DVALUE nz) SDL_PURE;
     /*** IDirect3DRMShadow2 methods ***/
     SDL_STDMETHOD(GetVisual)(SDL_THIS_ IDirect3DRMVisual **visual) SDL_PURE;
-    SDL_STDMETHOD(SetVisual)(SDL_THIS_ IUnknown *visual, SDL_DWORD flags) SDL_PURE;
+    SDL_STDMETHOD(SetVisual)(SDL_THIS_ SDL_IUnknown *visual, SDL_DWORD flags) SDL_PURE;
     SDL_STDMETHOD(GetLight)(SDL_THIS_ struct IDirect3DRMLight **light) SDL_PURE;
     SDL_STDMETHOD(SetLight)(SDL_THIS_ struct IDirect3DRMLight *light, SDL_DWORD flags) SDL_PURE;
     SDL_STDMETHOD(GetPlane)(SDL_THIS_ D3DVALUE *px, D3DVALUE *py, D3DVALUE *pz,
@@ -2254,7 +2250,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMFace,IDirect3DRMObject)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -2364,7 +2360,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMFace2,IDirect3DRMObject)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -2474,7 +2470,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMMeshBuilder,IDirect3DRMVisual)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -2646,7 +2642,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMMeshBuilder2,IDirect3DRMMeshBuilder)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -2827,7 +2823,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMMeshBuilder3,IDirect3DRMVisual)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -2836,8 +2832,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMMeshBuilder3,IDirect3DRMVisual)
     SDL_STDMETHOD(GetName)(SDL_THIS_ SDL_DWORD *size, char *name) SDL_PURE;
     SDL_STDMETHOD(GetClassName)(SDL_THIS_ SDL_DWORD *size, char *name) SDL_PURE;
     /*** IDirect3DRMMeshBuilder3 methods ***/
-    SDL_STDMETHOD(Load)(SDL_THIS_ void *filename, void *name, D3DRMLOADOPTIONS flags,
-            D3DRMLOADTEXTURE3CALLBACK cb, void *ctx) SDL_PURE;
+    SDL_STDMETHOD(Load)(SDL_THIS_ void *filename, void *name, D3DRMLOADOPTIONS flags, D3DRMLOADTEXTURE3CALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(Save)(SDL_THIS_ const char *filename, D3DRMXOFFORMAT, D3DRMSAVEOPTIONS save) SDL_PURE;
     SDL_STDMETHOD(Scale)(SDL_THIS_ D3DVALUE sx, D3DVALUE sy, D3DVALUE sz) SDL_PURE;
     SDL_STDMETHOD(Translate)(SDL_THIS_ D3DVALUE tx, D3DVALUE ty, D3DVALUE tz) SDL_PURE;
@@ -2886,10 +2881,10 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMMeshBuilder3,IDirect3DRMVisual)
     SDL_STDMETHOD(Empty)(SDL_THIS_ SDL_DWORD flags) SDL_PURE;
     SDL_STDMETHOD(Optimize)(SDL_THIS_ SDL_DWORD flags) SDL_PURE;
     SDL_STDMETHOD(AddFacesIndexed)(SDL_THIS_ SDL_DWORD flags, SDL_DWORD *pvIndices, SDL_DWORD *pIndexFirst, SDL_DWORD *pCount) SDL_PURE;
-    SDL_STDMETHOD(CreateSubMesh)(SDL_THIS_ IUnknown **mesh) SDL_PURE;
-    SDL_STDMETHOD(GetParentMesh)(SDL_THIS_ SDL_DWORD flags, IUnknown **parent) SDL_PURE;
-    SDL_STDMETHOD(GetSubMeshes)(SDL_THIS_ SDL_DWORD *count, IUnknown **meshes) SDL_PURE;
-    SDL_STDMETHOD(DeleteSubMesh)(SDL_THIS_ IUnknown *mesh) SDL_PURE;
+    SDL_STDMETHOD(CreateSubMesh)(SDL_THIS_ SDL_IUnknown **mesh) SDL_PURE;
+    SDL_STDMETHOD(GetParentMesh)(SDL_THIS_ SDL_DWORD flags, SDL_IUnknown **parent) SDL_PURE;
+    SDL_STDMETHOD(GetSubMeshes)(SDL_THIS_ SDL_DWORD *count, SDL_IUnknown **meshes) SDL_PURE;
+    SDL_STDMETHOD(DeleteSubMesh)(SDL_THIS_ SDL_IUnknown *mesh) SDL_PURE;
     SDL_STDMETHOD(Enable)(SDL_THIS_ SDL_DWORD) SDL_PURE;
     SDL_STDMETHOD(GetEnable)(SDL_THIS_ SDL_DWORD *) SDL_PURE;
     SDL_STDMETHOD(AddTriangles)(SDL_THIS_ SDL_DWORD flags, SDL_DWORD format, SDL_DWORD vertex_count, void *data) SDL_PURE;
@@ -3064,7 +3059,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMLight,IDirect3DRMObject)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -3176,7 +3171,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMTexture, IDirect3DRMVisual)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -3288,7 +3283,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMTexture2, IDirect3DRMTexture)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -3412,7 +3407,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMTexture3, IDirect3DRMVisual)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -3424,7 +3419,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMTexture3, IDirect3DRMVisual)
     SDL_STDMETHOD(InitFromFile)(SDL_THIS_ const char *filename) SDL_PURE;
     SDL_STDMETHOD(InitFromSurface)(SDL_THIS_ IDirectDrawSurface *surface) SDL_PURE;
     SDL_STDMETHOD(InitFromResource)(SDL_THIS_ SDL_HRSRC) SDL_PURE;
-    SDL_STDMETHOD(Changed)(SDL_THIS_ SDL_DWORD flags, SDL_DWORD rect_count, RECT *rects) SDL_PURE;
+    SDL_STDMETHOD(Changed)(SDL_THIS_ SDL_DWORD flags, SDL_DWORD rect_count, SDL_RECT *rects) SDL_PURE;
     SDL_STDMETHOD(SetColors)(SDL_THIS_ SDL_DWORD) SDL_PURE;
     SDL_STDMETHOD(SetShades)(SDL_THIS_ SDL_DWORD) SDL_PURE;
     SDL_STDMETHOD(SetDecalSize)(SDL_THIS_ D3DVALUE width, D3DVALUE height) SDL_PURE;
@@ -3548,7 +3543,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMWrap, IDirect3DRMObject)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -3614,7 +3609,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMMaterial, IDirect3DRMObject)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -3687,7 +3682,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMMaterial2, IDirect3DRMObject)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -3766,7 +3761,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMAnimation, IDirect3DRMObject)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -3845,7 +3840,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMAnimation2, IDirect3DRMObject)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -3939,7 +3934,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMAnimationSet, IDirect3DRMObject)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -4007,7 +4002,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMAnimationSet2, IDirect3DRMObject)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -4078,7 +4073,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMUserVisual, IDirect3DRMVisual)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -4129,7 +4124,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMUserVisual, IDirect3DRMVisual)
  * IDirect3DRMArray interface
  */
 #define SDL_INTERFACE IDirect3DRMArray
-SDL_DECLARE_INTERFACE_(IDirect3DRMArray, IUnknown)
+SDL_DECLARE_INTERFACE_(IDirect3DRMArray, SDL_IUnknown)
 {
     /*** IUnknown methods ***/
     SDL_STDMETHOD_(SDL_HRESULT,QueryInterface)(SDL_THIS_ SDL_REFIID riid, void** ppvObject) SDL_PURE;
@@ -4539,7 +4534,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMInterpolator, IDirect3DRMObject)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
@@ -4612,7 +4607,7 @@ SDL_DECLARE_INTERFACE_(IDirect3DRMClippedVisual, IDirect3DRMVisual)
     SDL_STDMETHOD_(SDL_ULONG,AddRef)(SDL_THIS) SDL_PURE;
     SDL_STDMETHOD_(SDL_ULONG,Release)(SDL_THIS) SDL_PURE;
     /*** IDirect3DRMObject methods ***/
-    SDL_STDMETHOD(Clone)(SDL_THIS_ IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
+    SDL_STDMETHOD(Clone)(SDL_THIS_ SDL_IUnknown *outer, SDL_REFIID iid, void **out) SDL_PURE;
     SDL_STDMETHOD(AddDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(DeleteDestroyCallback)(SDL_THIS_ D3DRMOBJECTCALLBACK cb, void *ctx) SDL_PURE;
     SDL_STDMETHOD(SetAppData)(SDL_THIS_ SDL_LPVOID data) SDL_PURE;
